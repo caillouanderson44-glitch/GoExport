@@ -499,6 +499,10 @@ class Controller:
             logger.info(f"Output file already exists, using: {output_path}")
             self.RECORDING_EDITED = output_path
         
+        # Set adaptive FPS based on resolution for optimal performance
+        adaptive_fps = 60 if self.height <= 480 else 30
+        helpers.save("OBS_FPS", adaptive_fps)
+        
         # Render the video
-        self.editor.render(self.RECORDING_EDITED, target_width=self.width, target_height=self.height, reencode=outro)
+        self.editor.render(self.RECORDING_EDITED, target_width=self.width, target_height=self.height, reencode=False)
         return True
