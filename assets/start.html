@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Screen Recorder Splash</title>
+    <title>Exporting Video - GoExport</title>
     <meta name="robots" content="noindex,nofollow" />
     <link rel="icon" type="image/png" href="icon.png" />
     <!-- Add this inside the <body> tag, before the closing </body> -->
@@ -16,21 +16,29 @@
 
       document.addEventListener("DOMContentLoaded", function () {
         const obsParam = getQueryParam("obs");
+        const width = getQueryParam("w") || 1280;
+        const height = getQueryParam("h") || 720;
+        const resolutionSpan = document.getElementById("resolution");
+        resolutionSpan.textContent = `${width}x${height} (${width === 1280 && height === 720 ? '720p' : width === 1920 && height === 1080 ? '1080p' : 'Custom'})`;
+        
         const noticeDiv = document.querySelector("#obs");
+        const statusSpan = document.querySelector("#status");
         if (obsParam === "true") {
-          noticeDiv.innerHTML =
-            "GoExport indicated you <em>are</em> using OBS. You may interact with your mouse and keyboard as usual but do not close this window or OBS.";
-          noticeDiv.style.borderLeftColor = "#5cb85c"; // green
-          noticeDiv.style.background = "#1a201a";
-          noticeDiv.style.color = "#ddffdd";
+          noticeDiv.innerHTML = "<strong>Status:</strong> OBS capture mode active. Recording in progress.";
+          statusSpan.textContent = "Recording with OBS...";
         } else if (obsParam === "false") {
-          noticeDiv.innerHTML =
-            "GoExport indicated you <em>are not</em> using OBS. Do <u>not</u> touch your mouse or keyboard. This browser is being remotely controlled for recording.";
-          noticeDiv.style.borderLeftColor = "#d9534f"; // red
-          noticeDiv.style.background = "#201a1a";
-          noticeDiv.style.color = "#ffdddd";
+          noticeDiv.innerHTML = "<strong>Status:</strong> Direct capture mode. Do not interact with this window.";
+          statusSpan.textContent = "Processing video...";
         }
-        // If obs param is missing, default notice remains
+        // Simulate progress for demo
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 10;
+          if (progress > 100) progress = 100;
+          document.getElementById("progressFill").style.width = progress + "%";
+          document.getElementById("progressText").textContent = "Exporting... " + Math.round(progress) + "%";
+          if (progress >= 100) clearInterval(interval);
+        }, 1000);
       });
     </script>
     <style type="text/css">
@@ -42,10 +50,10 @@
         padding: 0;
       }
       body {
-        background: #0b0e11; /* dark, reduces glare during recording */
+        background: #1a1a2e; /* dark blue background like GoAnimate */
         color: #e8e8e8;
         font: 16px/1.5 Arial, Helvetica, sans-serif;
-        overflow: hidden; /* no scrolling */
+        overflow: hidden;
       }
 
       /* Table layout for vertical centering (legacy-friendly) */
@@ -61,64 +69,69 @@
         padding: 20px;
       }
 
-      /* Content card */
       .panel {
         display: inline-block;
         text-align: left;
-        background: #151a20;
-        border: 1px solid #2a2f36;
+        background: #16213e; /* darker blue */
+        border: 1px solid #0f3460;
         padding: 24px;
-        max-width: 720px;
+        max-width: 600px;
         width: 100%;
-      }
-
-      .logo {
-        display: block;
-        margin: 0 auto 16px auto;
-        max-width: 220px;
-        height: auto;
+        border-radius: 8px;
       }
 
       h1 {
-        font-size: 22px;
-        margin: 0 0 12px 0;
+        font-size: 24px;
+        margin: 0 0 20px 0;
         letter-spacing: 0.5px;
-      }
-
-      .notice {
-        background: #201a1a;
-        border-left: 4px solid #d9534f; /* bootstrap-ish red tone for legacy vibe */
-        padding: 12px;
-        margin: 12px 0 16px 0;
-        color: #ffdddd;
-      }
-
-      ul {
-        margin: 0 0 12px 20px;
-        padding: 0;
-      }
-
-      .status {
-        font-size: 13px;
-        color: #9aa4af;
-        border-top: 1px solid #2a2f36;
-        padding-top: 10px;
-        margin-top: 12px;
+        color: #e94560; /* accent color */
         text-align: center;
       }
 
-      .kbd {
-        display: inline-block;
-        padding: 2px 6px;
-        border: 1px solid #777;
-        border-bottom-width: 2px;
-        background: #222;
-        color: #eee;
-        font-family: Consolas, "Courier New", monospace;
-        font-size: 12px;
-        line-height: 1.2;
-        vertical-align: middle;
-        margin: 0 2px;
+      .progress-container {
+        margin: 20px 0;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 20px;
+        background: #0f3460;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #e94560, #0f3460);
+        width: 0%;
+        transition: width 0.3s ease;
+      }
+
+      .progress-text {
+        text-align: center;
+        font-size: 14px;
+        color: #cbd2d9;
+      }
+
+      .notice {
+        background: #0f3460;
+        border-left: 4px solid #e94560;
+        padding: 12px;
+        margin: 12px 0 16px 0;
+        color: #ffffff;
+        border-radius: 4px;
+      }
+
+      .export-info {
+        margin-top: 20px;
+        padding-top: 16px;
+        border-top: 1px solid #0f3460;
+      }
+
+      .info-item {
+        margin-bottom: 8px;
+        font-size: 14px;
       }
 
       .small {
@@ -130,33 +143,29 @@
   <body>
     <div class="wrapper">
       <div class="center">
-        <div class="panel" role="region" aria-label="Screen Recorder Notice">
-          <img class="logo" src="logo.svg" alt="Application Logo" />
-          <h1>Screen Recorder is Active</h1>
+        <div class="panel" role="region" aria-label="Video Export Progress">
+          <h1>Exporting Video</h1>
+
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill" id="progressFill" style="width: 0%;"></div>
+            </div>
+            <div class="progress-text" id="progressText">Preparing export...</div>
+          </div>
 
           <div id="obs" class="notice" role="alert">
-            <strong>Important:</strong> If you are <em>not</em> using OBS, do
-            <u>not</u> touch your mouse or keyboard. This browser is being
-            remotely controlled for recording.
+            <strong>Status:</strong> Initializing video capture. Please keep this window open.
           </div>
 
           <p class="small">
-            If you <strong>are</strong> using OBS, you can press
-            <span class="kbd">Alt</span>+<span class="kbd">Tab</span> to switch
-            apps and continue working as usual. The recorder will capture the
-            intended window.
+            Your video is being processed. This may take a few minutes depending on length and resolution.
           </p>
 
-          <ul>
-            <li>If you see this page, everything is ready for capture.</li>
-            <li>
-              Keep this window visible unless your workflow says otherwise.
-            </li>
-            <li>Do not overlay anything over this window unless using OBS.</li>
-            <li>Questions? Refer to the FAQ on Github.</li>
-          </ul>
-
-          <p class="status">Please wait...</p>
+          <div class="export-info">
+            <div class="info-item"><strong>Resolution:</strong> <span id="resolution">1280x720 (720p)</span></div>
+            <div class="info-item"><strong>Format:</strong> MP4</div>
+            <div class="info-item"><strong>Status:</strong> <span id="status">Starting...</span></div>
+          </div>
         </div>
       </div>
     </div>

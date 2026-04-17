@@ -347,7 +347,7 @@ class Controller:
 
     def export(self):
         try:
-            if not self.browser.start():
+            if not self.browser.start(self.width, self.height):
                 logger.error("Could not start webdriver")
                 return False
 

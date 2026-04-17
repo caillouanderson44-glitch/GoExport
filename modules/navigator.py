@@ -36,7 +36,7 @@ class Interface:
         if helpers.os_is_windows():
             self.options.add_argument("--disable-infobars")
             self.options.add_argument("--disable-bookmarks-bar")
-            self.options.add_argument("--kiosk")
+            # self.options.add_argument("--kiosk")  # Removed to allow window resizing
             self.options.add_argument("--allow-running-insecure-content")
             self.options.add_argument("--force-device-scale-factor=1")
             self.options.add_argument("--high-dpi-support=1")
@@ -45,7 +45,7 @@ class Interface:
         elif helpers.os_is_linux():
             self.options.add_argument("--disable-infobars")
             self.options.add_argument("--disable-bookmarks-bar")
-            self.options.add_argument("--kiosk")
+            # self.options.add_argument("--kiosk")  # Removed to allow window resizing
             self.options.add_argument("--no-sandbox")
             self.options.add_argument("--force-device-scale-factor=1")
             self.options.add_argument("--high-dpi-support=1")
@@ -53,13 +53,14 @@ class Interface:
             self.options.add_argument(f"--ppapi-flash-version={flash_ver}")
 
         # Common options for both OSes
+        self.options.add_argument("--app=" + self.start_url)
         self.options.add_argument(f"--user-data-dir={helpers.get_path(None, helpers.get_config("DEFAULT_OUTPUT_FILENAME"), f"{helpers.get_timestamp()}_chrome_profile_temp")}")
         self.options.add_experimental_option("excludeSwitches", ["enable-automation"])
         self.options.binary_location = chromium
         self.service = Service(executable_path=chromedriver)
         self.driver = None
 
-    def start(self):
+    def start(self, width: int = 1280, height: int = 720):
         """Initializes and starts the Selenium WebDriver."""
         # On Linux, set DISPLAY environment variable to match x11grab_display parameter
         if helpers.os_is_linux():
@@ -67,7 +68,11 @@ class Interface:
             os.environ['DISPLAY'] = display
             logger.info(f"Set DISPLAY environment variable to {display}")
             
+        # Update start_url with resolution
+        self.start_url += f"&w={width}&h={height}"
+        
         self.driver = webdriver.Chrome(options=self.options, service=self.service)
+        self.driver.set_window_size(width, height)
         self.driver.get(self.start_url)
         helpers.wait(2)
         return True
