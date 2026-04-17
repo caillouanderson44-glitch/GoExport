@@ -101,6 +101,11 @@ jobs:
           tar -czvf goexport_linux_portable_amd64.tar.gz -C dist .
           mv goexport_linux_portable_amd64.tar.gz dist/
 
+      - name: Archive Windows Portable
+        if: matrix.os == 'windows-latest'
+        run: |
+          Compress-Archive -Path dist\* -DestinationPath goexport_win_portable_amd64.zip
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -155,6 +160,7 @@ jobs:
           files: |
             artifacts/**/goexport_linux_portable_amd64.tar.gz
             artifacts/**/goexport_win_installer_amd64.exe
+            artifacts/**/goexport_win_portable_amd64.zip
           body: ${{ needs.changelog.outputs.changelog }}
           prerelease: ${{ steps.check-beta.outputs.is_beta }}
         env:
