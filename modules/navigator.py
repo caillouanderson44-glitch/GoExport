@@ -36,7 +36,7 @@ class Interface:
         if helpers.os_is_windows():
             self.options.add_argument("--disable-infobars")
             self.options.add_argument("--disable-bookmarks-bar")
-            # self.options.add_argument("--kiosk")  # Removed to allow window resizing
+            self.options.add_argument("--kiosk")  # Re-enabled for fullscreen
             self.options.add_argument("--allow-running-insecure-content")
             self.options.add_argument("--force-device-scale-factor=1")
             self.options.add_argument("--high-dpi-support=1")
@@ -45,7 +45,7 @@ class Interface:
         elif helpers.os_is_linux():
             self.options.add_argument("--disable-infobars")
             self.options.add_argument("--disable-bookmarks-bar")
-            # self.options.add_argument("--kiosk")  # Removed to allow window resizing
+            self.options.add_argument("--kiosk")  # Re-enabled for fullscreen
             self.options.add_argument("--no-sandbox")
             self.options.add_argument("--force-device-scale-factor=1")
             self.options.add_argument("--high-dpi-support=1")
