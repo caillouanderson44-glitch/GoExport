@@ -160,10 +160,12 @@ class Editor:
                 command = [
                     ffmpeg,
                     "-y",
+                    "-fflags", "+discardcorrupt",  # Skip corrupt frames for speed
                     "-f", "concat",
                     "-safe", "0",
                     "-i", file_list,
                     "-c", "copy",
+                    "-avoid_negative_ts", "make_zero",  # Handle timestamps quickly
                     output,
                 ]
                 helpers.try_command(*command, return_output=True)
